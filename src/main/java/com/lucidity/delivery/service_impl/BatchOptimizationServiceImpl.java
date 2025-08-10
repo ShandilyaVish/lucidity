@@ -23,11 +23,6 @@ public class BatchOptimizationServiceImpl implements BatchOptimizationService {
     }
 
     @Override
-    public BatchPlan computeOptimalPlan(DeliveryPerson deliveryPerson, List<Order> orders) {
-        return computeOptimalPlan(Collections.singletonList(deliveryPerson), orders);
-    }
-
-    @Override
     public BatchPlan computeOptimalPlan(List<DeliveryPerson> deliveryPeople, List<Order> orders) {
         if (orders == null || orders.isEmpty()) {
             throw new IllegalArgumentException("At least one order is required");
@@ -35,7 +30,6 @@ public class BatchOptimizationServiceImpl implements BatchOptimizationService {
         if (deliveryPeople == null || deliveryPeople.isEmpty()) {
             throw new IllegalArgumentException("At least one delivery person is required");
         }
-
 
         Map<String, Restaurant> restaurantById = new HashMap<>();
         for (Order order : orders) {
@@ -62,7 +56,7 @@ public class BatchOptimizationServiceImpl implements BatchOptimizationService {
                 return a.getOrderId().compareTo(b.getOrderId());
             });
 
-            double currentOtherMax[] = new double[routes.size()];
+            double[] currentOtherMax = new double[routes.size()];
             for (int i = 0; i < routes.size(); i++) {
                 currentOtherMax[i] = otherRoutesMaxFinish(i, routes);
             }
@@ -96,16 +90,24 @@ public class BatchOptimizationServiceImpl implements BatchOptimizationService {
             assignedOrders.add(best.getOrderId());
         }
 
+        return buildBatchPlan(routes);
+    }
+
+    private BatchPlan buildBatchPlan(List<RoutePlan> routes) {
         BatchPlan plan = new BatchPlan();
-        double makespan = 0.0;
+        final double[] sumOfETAs = {0.0};
+        
         for (RoutePlan route : routes) {
-            makespan = Math.max(makespan, route.getCurrentMinutes());
             for (String step : route.getSteps()) {
                 plan.addStep("[" + route.getDeliveryPerson().getName() + "] " + step);
             }
-            route.getOrderEtas().forEach((orderId, orderEta) -> plan.recordOrderEta(orderId, orderEta.getConsumerName(), orderEta.getEtaMinutes()));
+            route.getOrderEtas().forEach((orderId, orderEta) -> {
+                plan.recordOrderEta(orderId, orderEta.getConsumerName(), orderEta.getEtaMinutes());
+                sumOfETAs[0] += orderEta.getEtaMinutes();
+            });
         }
-        plan.setTotalMinutes(makespan);
+        
+        plan.setTotalMinutes(sumOfETAs[0]);
         return plan;
     }
 
@@ -157,5 +159,4 @@ public class BatchOptimizationServiceImpl implements BatchOptimizationService {
         route.setCurrentLocation(consumerLocation);
         route.setCurrentMinutes(t);
     }
-
 } 

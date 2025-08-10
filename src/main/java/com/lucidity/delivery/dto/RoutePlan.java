@@ -3,12 +3,16 @@ package com.lucidity.delivery.dto;
 import com.lucidity.delivery.domain.DeliveryPerson;
 import com.lucidity.delivery.domain.GeoLocation;
 import com.lucidity.delivery.domain.OrderEta;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
+@Setter
 public class RoutePlan {
     private final DeliveryPerson deliveryPerson;
     private GeoLocation currentLocation;
@@ -20,34 +24,6 @@ public class RoutePlan {
         this.deliveryPerson = deliveryPerson;
         this.currentLocation = deliveryPerson.getCurrentLocation();
         this.currentMinutes = 0.0;
-    }
-
-    public DeliveryPerson getDeliveryPerson() {
-        return deliveryPerson;
-    }
-
-    public GeoLocation getCurrentLocation() {
-        return currentLocation;
-    }
-
-    public void setCurrentLocation(GeoLocation currentLocation) {
-        this.currentLocation = currentLocation;
-    }
-
-    public double getCurrentMinutes() {
-        return currentMinutes;
-    }
-
-    public void setCurrentMinutes(double currentMinutes) {
-        this.currentMinutes = currentMinutes;
-    }
-
-    public List<String> getSteps() {
-        return steps;
-    }
-
-    public Map<String, OrderEta> getOrderEtas() {
-        return orderEtas;
     }
 
     public void recordOrderEta(String orderId, String consumerName, double etaMinutes) {

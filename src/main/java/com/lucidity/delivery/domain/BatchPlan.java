@@ -1,10 +1,15 @@
 package com.lucidity.delivery.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
+@Setter
 public class BatchPlan {
     private final List<String> steps = new ArrayList<>();
     private double totalMinutes;
@@ -12,22 +17,6 @@ public class BatchPlan {
 
     public void addStep(String step) {
         steps.add(step);
-    }
-
-    public List<String> getSteps() {
-        return steps;
-    }
-
-    public double getTotalMinutes() {
-        return totalMinutes;
-    }
-
-    public void setTotalMinutes(double totalMinutes) {
-        this.totalMinutes = totalMinutes;
-    }
-
-    public Map<String, OrderEta> getOrderIdToEta() {
-        return orderIdToEta;
     }
 
     public void recordOrderEta(String orderId, String consumerName, double etaMinutes) {
