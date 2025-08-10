@@ -26,5 +26,4 @@ docker run --rm delivery-optimizer:latest
 ```
 
 ## Notes
-- No HTTP endpoints are exposed; controller classes and API DTOs have been removed.
 - Distances use a haversine-based estimator at 20 km/h to convert to minutes. 
